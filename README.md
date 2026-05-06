@@ -79,7 +79,7 @@ All commands below assume you are in the **project root directory**.
 
 ```bash
 git clone <YOUR_REPO_URL>
-cd Assignment
+cd mlops-assignment
 python3 -m venv .venv
 source .venv/bin/activate      # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
