@@ -1,14 +1,16 @@
 === Kubernetes Deployment ===
-NAME                                     READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
-pod/heart-disease-api-7b5bc5b856-4fch6   1/1     Running   0          20s   10.244.0.7   minikube   <none>           <none>
-pod/heart-disease-api-7b5bc5b856-7phtg   1/1     Running   0          20s   10.244.0.6   minikube   <none>           <none>
+NAME                                     READY   STATUS    RESTARTS   AGE
+pod/heart-disease-api-7b5bc5b856-rrsf8   1/1     Running   0          32s
+pod/heart-disease-api-7b5bc5b856-tzhgz   1/1     Running   0          32s
 
-NAME                                TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
-service/heart-disease-api-service   LoadBalancer   10.105.51.75   <pending>     80:31725/TCP   19s   app=heart-disease-api
-service/kubernetes                  ClusterIP      10.96.0.1      <none>        443/TCP        48m   <none>
+NAME                                TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+service/heart-disease-api-service   LoadBalancer   10.99.80.113   <pending>     80:30578/TCP   18s
+service/kubernetes                  ClusterIP      10.96.0.1      <none>        443/TCP        92s
 
-NAME                                READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS          IMAGES                     SELECTOR
-deployment.apps/heart-disease-api   2/2     2            2           20s   heart-disease-api   heart-disease-api:latest   app=heart-disease-api
+NAME                                READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/heart-disease-api   2/2     2            2           32s
+(.venv) mammagan@MAMMAGAN-M-TC73 MLOPs-Final % minikube service heart-disease-api-service --url
+http://127.0.0.1:62541
 
 === Deployment Description ===
 Name:                   heart-disease-api

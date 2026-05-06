@@ -1,39 +1,143 @@
-============================= test session starts ==============================
-platform darwin -- Python 3.14.3, pytest-9.0.3, pluggy-1.6.0 -- /Users/ambtripa/Desktop/Ambika/BIT-MTech/Sem2/MLOps/Assignment/.venv/bin/python
+source /Users/mammagan/M-Tech/MLOPs-Final/.venv/bin/activate                     
+mammagan@MAMMAGAN-M-TC73 MLOPs-Final % source /Users/mammagan/M-Tech/MLOPs-Final/
+.venv/bin/activate
+(.venv) mammagan@MAMMAGAN-M-TC73 MLOPs-Final % python -m pytest tests/ -v
+============================== test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/mammagan/M-Tech/MLOPs-Final/.venv/bin/python
 cachedir: .pytest_cache
-rootdir: /Users/ambtripa/Desktop/Ambika/BIT-MTech/Sem2/MLOps/Assignment
-plugins: anyio-4.13.0
-collecting ... collected 24 items
+rootdir: /Users/mammagan/M-Tech/MLOPs-Final
+plugins: anyio-4.12.1
+collected 24 items                                                              
 
-tests/test_api.py::TestAPI::test_root PASSED                             [  4%]
-tests/test_api.py::TestAPI::test_health PASSED                           [  8%]
-tests/test_api.py::TestAPI::test_predict_valid PASSED                    [ 12%]
-tests/test_api.py::TestAPI::test_predict_missing_field PASSED            [ 16%]
-tests/test_api.py::TestAPI::test_metrics_endpoint PASSED                 [ 20%]
-tests/test_model.py::TestTraining::test_models_dict_has_entries PASSED   [ 25%]
+tests/test_api.py::TestAPI::test_root PASSED                              [  4%]
+tests/test_api.py::TestAPI::test_health PASSED                            [  8%]
+tests/test_api.py::TestAPI::test_predict_valid PASSED                     [ 12%]
+tests/test_api.py::TestAPI::test_predict_missing_field PASSED             [ 16%]
+tests/test_api.py::TestAPI::test_metrics_endpoint PASSED                  [ 20%]
+tests/test_model.py::TestTraining::test_models_dict_has_entries PASSED    [ 25%]
 tests/test_model.py::TestTraining::test_each_model_has_pipeline_and_grid PASSED [ 29%]
 tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics PASSED [ 33%]
-tests/test_model.py::TestInference::test_predictor_loads PASSED          [ 37%]
-tests/test_model.py::TestInference::test_predict_returns_dict PASSED     [ 41%]
+tests/test_model.py::TestInference::test_predictor_loads PASSED           [ 37%]
+tests/test_model.py::TestInference::test_predict_returns_dict PASSED      [ 41%]
 tests/test_model.py::TestInference::test_predict_has_required_keys PASSED [ 45%]
-tests/test_model.py::TestInference::test_prediction_is_binary PASSED     [ 50%]
-tests/test_model.py::TestInference::test_confidence_in_range PASSED      [ 54%]
-tests/test_model.py::TestInference::test_risk_level_valid PASSED         [ 58%]
-tests/test_model.py::TestInference::test_predict_batch PASSED            [ 62%]
+tests/test_model.py::TestInference::test_prediction_is_binary PASSED      [ 50%]
+tests/test_model.py::TestInference::test_confidence_in_range PASSED       [ 54%]
+tests/test_model.py::TestInference::test_risk_level_valid PASSED          [ 58%]
+tests/test_model.py::TestInference::test_predict_batch PASSED             [ 62%]
 tests/test_model.py::TestInference::test_sample_input_has_all_features PASSED [ 66%]
-tests/test_preprocess.py::TestLoadData::test_returns_dataframe PASSED    [ 70%]
-tests/test_preprocess.py::TestLoadData::test_no_missing_values PASSED    [ 75%]
+tests/test_preprocess.py::TestLoadData::test_returns_dataframe PASSED     [ 70%]
+tests/test_preprocess.py::TestLoadData::test_no_missing_values PASSED     [ 75%]
 tests/test_preprocess.py::TestLoadData::test_expected_columns_present PASSED [ 79%]
-tests/test_preprocess.py::TestLoadData::test_target_is_binary PASSED     [ 83%]
-tests/test_preprocess.py::TestLoadData::test_non_empty PASSED            [ 87%]
-tests/test_preprocess.py::TestLoadData::test_feature_count PASSED        [ 91%]
-tests/test_preprocess.py::TestLoadData::test_invalid_path_raises PASSED  [ 95%]
+tests/test_preprocess.py::TestLoadData::test_target_is_binary PASSED      [ 83%]
+tests/test_preprocess.py::TestLoadData::test_non_empty PASSED             [ 87%]
+tests/test_preprocess.py::TestLoadData::test_feature_count PASSED         [ 91%]
+tests/test_preprocess.py::TestLoadData::test_invalid_path_raises PASSED   [ 95%]
 tests/test_preprocess.py::TestLoadData::test_handles_missing_values PASSED [100%]
 
-=============================== warnings summary ===============================
+=============================== warnings summary ================================
+.venv/lib/python3.9/site-packages/urllib3/__init__.py:35
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+    warnings.warn(
+
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:64
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    prop = Group((name + Suppress("=") + comma_separated(value)) | oneOf(_CONSTANTS))
+
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:85
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:85
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:85
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:85
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:85
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:85
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:89
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:89
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:89
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:89
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:89
+.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:89
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/matplotlib/_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv/lib/python3.9/site-packages/matplotlib/_mathtext.py:45
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
 tests/test_api.py::TestAPI::test_root
-  /Users/ambtripa/Desktop/Ambika/BIT-MTech/Sem2/MLOps/Assignment/src/api/model_app.py:85: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+  /Users/mammagan/M-Tech/MLOPs-Final/src/api/model_app.py:86: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
     class PatientData(BaseModel):
 
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/sklearn/linear_model/_logistic.py:1196: UserWarning: l1_ratio parameter is only used when penalty is 'elasticnet'. Got (penalty=l2)
+    warnings.warn(
+
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/sklearn/linear_model/_linear_loss.py:200: RuntimeWarning: divide by zero encountered in matmul
+    raw_prediction = X @ weights + intercept
+
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/sklearn/linear_model/_linear_loss.py:200: RuntimeWarning: overflow encountered in matmul
+    raw_prediction = X @ weights + intercept
+
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/sklearn/linear_model/_linear_loss.py:200: RuntimeWarning: invalid value encountered in matmul
+    raw_prediction = X @ weights + intercept
+
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/sklearn/linear_model/_linear_loss.py:330: RuntimeWarning: divide by zero encountered in matmul
+    grad[:n_features] = X.T @ grad_pointwise + l2_reg_strength * weights
+
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/sklearn/linear_model/_linear_loss.py:330: RuntimeWarning: overflow encountered in matmul
+    grad[:n_features] = X.T @ grad_pointwise + l2_reg_strength * weights
+
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/sklearn/linear_model/_linear_loss.py:330: RuntimeWarning: invalid value encountered in matmul
+    grad[:n_features] = X.T @ grad_pointwise + l2_reg_strength * weights
+
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/sklearn/utils/extmath.py:203: RuntimeWarning: divide by zero encountered in matmul
+    ret = a @ b
+
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/sklearn/utils/extmath.py:203: RuntimeWarning: overflow encountered in matmul
+    ret = a @ b
+
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+tests/test_model.py::TestTraining::test_cross_val_evaluate_returns_metrics
+  /Users/mammagan/M-Tech/MLOPs-Final/.venv/lib/python3.9/site-packages/sklearn/utils/extmath.py:203: RuntimeWarning: invalid value encountered in matmul
+    ret = a @ b
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======================== 24 passed, 1 warning in 11.50s ========================
+======================== 24 passed, 55 warnings in 1.74s ========================
+(.venv) mammagan@MAMMAGAN-M-TC73 MLOPs-Final % 
