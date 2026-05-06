@@ -12,23 +12,27 @@ Tuning:
     for each model independently.
 
 Evaluation:
-  - 5-fold cross-validation on the training set (accuracy, precision, recall, ROC-AUC)
+  - 5-fold cross-validation on the training set (accuracy, precision, recall, F1, ROC-AUC)
   - Hold-out test set metrics + classification report
+  - Feature importance analysis for model interpretability
   - The model with the higher mean CV ROC-AUC is selected and saved.
 
 Usage:
     python train.py
 """
 
+import hashlib
+import time
 import joblib
 import mlflow
 import mlflow.sklearn
+import numpy as np
 import pandas as pd
 from pathlib import Path
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (classification_report, roc_auc_score,
+from sklearn.metrics import (classification_report, roc_auc_score, f1_score,
                              make_scorer, precision_score, recall_score,
                              confusion_matrix, roc_curve)
 import matplotlib
@@ -99,11 +103,12 @@ MODELS = {
 # Evaluation helpers
 # ---------------------------------------------------------------------------
 def cross_val_evaluate(pipeline, X, y, cv):
-    """Run cross-validation and return mean ± std for key metrics."""
+    """Run cross-validation and return mean +/- std for key metrics."""
     scoring = {
         "accuracy": "accuracy",
         "precision": make_scorer(precision_score, zero_division=0),
         "recall": make_scorer(recall_score, zero_division=0),
+        "f1": make_scorer(f1_score, zero_division=0),
         "roc_auc": "roc_auc",
     }
     results = cross_validate(pipeline, X, y, cv=cv, scoring=scoring)
@@ -125,16 +130,81 @@ def print_cv_summary(name, summary):
 
 def print_test_metrics(name, y_test, y_pred, y_prob):
     auc = roc_auc_score(y_test, y_prob)
+    f1 = f1_score(y_test, y_pred, zero_division=0)
     print(f"\n  Hold-out Test Metrics ({name})")
     print(f"  ROC-AUC : {auc:.4f}")
+    print(f"  F1-Score: {f1:.4f}")
     print(classification_report(y_test, y_pred,
                                 target_names=["No Disease", "Disease"]))
-    # indent=2))
 
 
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+def plot_feature_importance(pipeline, feature_names, model_name, save_path):
+    """Generate and save feature importance plot."""
+    classifier = pipeline.named_steps['classifier']
+
+    if hasattr(classifier, 'feature_importances_'):
+        importances = classifier.feature_importances_
+    elif hasattr(classifier, 'coef_'):
+        importances = np.abs(classifier.coef_[0])
+    else:
+        return None
+
+    indices = np.argsort(importances)[::-1]
+    sorted_features = [feature_names[i] for i in indices]
+    sorted_importances = importances[indices]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = plt.cm.viridis(np.linspace(0.3, 0.9, len(sorted_features)))
+    ax.barh(range(len(sorted_features)), sorted_importances[::-1],
+            color=colors[::-1], edgecolor='white', linewidth=0.5)
+    ax.set_yticks(range(len(sorted_features)))
+    ax.set_yticklabels(sorted_features[::-1])
+    ax.set_xlabel('Importance (absolute coefficient / Gini importance)')
+    ax.set_title(f'Feature Importance — {model_name}', fontweight='bold', fontsize=12)
+    ax.grid(axis='x', alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(save_path, dpi=100, bbox_inches='tight')
+    plt.close(fig)
+    return save_path
+
+
+def plot_model_comparison(results_summary, save_path):
+    """Generate a bar chart comparing models across all metrics."""
+    metrics = list(next(iter(results_summary.values()))["cv_summary"].keys())
+    model_names = list(results_summary.keys())
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    x = np.arange(len(metrics))
+    width = 0.35
+    colors = ['#3498db', '#e74c3c']
+
+    for i, name in enumerate(model_names):
+        means = [results_summary[name]["cv_summary"][m][0] for m in metrics]
+        stds = [results_summary[name]["cv_summary"][m][1] for m in metrics]
+        bars = ax.bar(x + i * width, means, width, yerr=stds,
+                      label=name, color=colors[i], edgecolor='white',
+                      linewidth=0.5, capsize=4, alpha=0.85)
+        for bar, mean in zip(bars, means):
+            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.01,
+                    f'{mean:.3f}', ha='center', va='bottom', fontsize=8, fontweight='bold')
+
+    ax.set_xlabel('Metric')
+    ax.set_ylabel('Score')
+    ax.set_title('Model Comparison — Cross-Validation Performance', fontweight='bold', fontsize=13)
+    ax.set_xticks(x + width / 2)
+    ax.set_xticklabels([m.replace('_', ' ').title() for m in metrics])
+    ax.set_ylim(0, 1.15)
+    ax.legend(loc='upper right', fontsize=10)
+    ax.grid(axis='y', alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(save_path, dpi=100, bbox_inches='tight')
+    plt.close(fig)
+    return save_path
+
+
 def main():
     mlflow.set_tracking_uri(str(BASE_DIR / "mlruns"))
     mlflow.set_experiment("heart-disease-classification")
@@ -142,6 +212,9 @@ def main():
     df = load_data()
     X = df[FEATURE_COLS]
     y = df['target']
+
+    # Log dataset info for reproducibility
+    dataset_hash = hashlib.md5(pd.util.hash_pandas_object(df).values.tobytes()).hexdigest()
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
@@ -166,6 +239,14 @@ def main():
         print("  Tuning hyperparameters via GridSearchCV (5-fold CV) ...")
 
         with mlflow.start_run(run_name=name):
+            # Log dataset metadata for traceability
+            mlflow.log_param("dataset_hash", dataset_hash)
+            mlflow.log_param("dataset_shape", str(df.shape))
+            mlflow.log_param("train_size", len(X_train))
+            mlflow.log_param("test_size", len(X_test))
+            mlflow.log_param("features", str(FEATURE_COLS))
+
+            train_start = time.time()
             grid = GridSearchCV(
                 spec["pipeline"],
                 spec["param_grid"],
@@ -175,6 +256,7 @@ def main():
                 refit=True,
             )
             grid.fit(X_train, y_train)
+            train_time = time.time() - train_start
 
             best_params = {
                 k.replace("classifier__", ""): v
@@ -182,6 +264,7 @@ def main():
             }
             print(f"  Best params : {best_params}")
             print(f"  Best CV AUC : {grid.best_score_:.4f}")
+            print(f"  Training time: {train_time:.2f}s")
 
             # Evaluate best estimator with full metric suite
             tuned_pipeline = grid.best_estimator_
@@ -191,6 +274,7 @@ def main():
             # --- MLflow: log params, metrics, and model ---
             mlflow.log_params(best_params)
             mlflow.log_param("model_type", name)
+            mlflow.log_metric("training_time_seconds", train_time)
             for metric, (mean, std) in cv_summary.items():
                 mlflow.log_metric(f"cv_{metric}_mean", mean)
                 mlflow.log_metric(f"cv_{metric}_std", std)
@@ -201,11 +285,19 @@ def main():
             test_auc = roc_auc_score(y_test, y_prob)
             test_precision = precision_score(y_test, y_pred, zero_division=0)
             test_recall = recall_score(y_test, y_pred, zero_division=0)
+            test_f1 = f1_score(y_test, y_pred, zero_division=0)
             mlflow.log_metric("test_roc_auc", test_auc)
             mlflow.log_metric("test_precision", test_precision)
             mlflow.log_metric("test_recall", test_recall)
+            mlflow.log_metric("test_f1", test_f1)
 
             mlflow.sklearn.log_model(tuned_pipeline, artifact_path="model")
+
+            # --- Feature importance plot ---
+            fi_path = str(BASE_DIR / f"screenshots/feature_importance_{name.replace(' ', '_').lower()}.png")
+            fi_result = plot_feature_importance(tuned_pipeline, FEATURE_COLS, name, fi_path)
+            if fi_result:
+                mlflow.log_artifact(fi_path)
 
             # --- MLflow: log confusion matrix plot ---
             cm = confusion_matrix(y_test, y_pred)
@@ -248,6 +340,7 @@ def main():
                 "cv_summary": cv_summary,
                 "best_params": best_params,
                 "cv_auc": cv_summary["roc_auc"][0],
+                "train_time": train_time,
             }
 
             if cv_summary["roc_auc"][0] > best_auc:
@@ -269,7 +362,14 @@ def main():
         print_test_metrics(name, y_test, y_pred, y_prob)
 
     # -----------------------------------------------------------------------
-    # Step 3 – Model selection decision
+    # Step 3 – Model comparison visualization
+    # -----------------------------------------------------------------------
+    comparison_path = str(BASE_DIR / "screenshots" / "model_comparison.png")
+    plot_model_comparison(results_summary, comparison_path)
+    print(f"\n  Model comparison chart saved → {comparison_path}")
+
+    # -----------------------------------------------------------------------
+    # Step 4 – Model selection decision
     # -----------------------------------------------------------------------
     print("\n" + "=" * 60)
     print("  MODEL SELECTION DECISION")
@@ -277,14 +377,15 @@ def main():
     for name, info in results_summary.items():
         mean_auc, std_auc = info["cv_summary"]["roc_auc"]
         marker = "  <-- SELECTED" if name == best_name else ""
-        print(f"  {name:<22}  CV ROC-AUC = {mean_auc:.4f} ± {std_auc:.4f}{marker}")
+        print(f"  {name:<22}  CV ROC-AUC = {mean_auc:.4f} +/- {std_auc:.4f}"
+              f"  (trained in {info['train_time']:.2f}s){marker}")
 
     print(f"\n  Winner : {best_name}  (highest mean CV ROC-AUC = {best_auc:.4f})")
     print("  Rationale: model chosen purely on generalisation performance "
           "measured by stratified 5-fold cross-validation ROC-AUC.\n")
 
     # -----------------------------------------------------------------------
-    # Step 4 – Save best model & log as MLflow artifact
+    # Step 5 – Save best model & log as MLflow artifact
     # -----------------------------------------------------------------------
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(best_pipeline, MODEL_PATH)
@@ -292,9 +393,11 @@ def main():
 
     with mlflow.start_run(run_name=f"best-model-{best_name}"):
         mlflow.log_param("selected_model", best_name)
+        mlflow.log_param("dataset_hash", dataset_hash)
         mlflow.log_metric("best_cv_roc_auc", best_auc)
         mlflow.sklearn.log_model(best_pipeline, artifact_path="best_model")
         mlflow.log_artifact(str(MODEL_PATH))
+        mlflow.log_artifact(comparison_path)
 
     print(f"  MLflow tracking URI → {BASE_DIR / 'mlruns'}")
     print("=" * 60)
