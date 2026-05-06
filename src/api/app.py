@@ -22,54 +22,272 @@ predictor = HeartDiseasePredictor()
 
 HTML = """
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heart Disease Prediction</title>
     <style>
-        body { font-family: Arial; background: #f5f5f5; text-align: center; padding: 40px; }
-        h1 { color: #c0392b; }
-        input { padding: 8px; margin: 5px; width: 220px; }
-        label { display: inline-block; width: 320px; text-align: right; margin-right: 8px; font-weight: bold; }
-        .field { margin: 6px 0; }
-        button { padding: 10px 25px; background: #c0392b; color: white; border: none; margin-top: 15px; cursor: pointer; font-size: 16px; border-radius: 4px; }
-        button:hover { background: #96281b; }
-        .result { margin-top: 25px; font-size: 20px; font-weight: bold; padding: 15px; border-radius: 6px; display: inline-block; }
-        .disease { background: #fadbd8; color: #c0392b; }
-        .healthy { background: #d5f5e3; color: #1e8449; }
-        .info { font-size: 14px; color: #555; margin-top: 8px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background: #b71c1c;
+            color: white;
+            padding: 14px 24px;
+        }
+
+        header h1 { font-size: 19px; font-weight: 600; }
+        header p { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+
+        .wrap {
+            max-width: 720px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            padding: 16px 20px;
+            margin-bottom: 14px;
+        }
+
+        .card h2 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #b71c1c;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #ffcdd2;
+        }
+
+        .row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .row .field { flex: 1; }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 4px;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 7px 10px;
+            font-size: 13px;
+            font-family: inherit;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            outline: none;
+            border-color: #b71c1c;
+            background: white;
+        }
+
+        .field input::placeholder { color: #aaa; }
+
+        .btn-wrap {
+            text-align: center;
+            padding-top: 8px;
+        }
+
+        .btn {
+            background: #b71c1c;
+            color: white;
+            border: none;
+            padding: 10px 38px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn:hover { background: #9a1515; }
+
+        .result {
+            padding: 14px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .result-disease {
+            background: #ffebee;
+            border-left: 4px solid #e53935;
+        }
+
+        .result-healthy {
+            background: #e8f5e9;
+            border-left: 4px solid #43a047;
+        }
+
+        .result h3 { font-size: 18px; margin-bottom: 6px; }
+        .result-disease h3 { color: #c62828; }
+        .result-healthy h3 { color: #2e7d32; }
+
+        .result p {
+            font-size: 13px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
-    <h1>Heart Disease Prediction</h1>
-    <p>Enter patient details below to predict heart disease risk.</p>
+    <header>
+        <h1>Heart Disease Prediction</h1>
+        <p>Enter patient data to assess heart disease risk</p>
+    </header>
 
-    <form method="POST">
-        <div class="field"><label>Age:</label><input name="age" placeholder="e.g. 55" required></div>
-        <div class="field"><label>Sex (0=Female, 1=Male):</label><input name="sex" placeholder="0 or 1" required></div>
-        <div class="field"><label>Chest Pain Type (0-3):</label><input name="cp" placeholder="0-3" required></div>
-        <div class="field"><label>Resting Blood Pressure (mm Hg):</label><input name="trestbps" placeholder="e.g. 130" required></div>
-        <div class="field"><label>Serum Cholesterol (mg/dl):</label><input name="chol" placeholder="e.g. 250" required></div>
-        <div class="field"><label>Fasting Blood Sugar > 120 (0/1):</label><input name="fbs" placeholder="0 or 1" required></div>
-        <div class="field"><label>Resting ECG Results (0-2):</label><input name="restecg" placeholder="0-2" required></div>
-        <div class="field"><label>Max Heart Rate Achieved:</label><input name="thalach" placeholder="e.g. 150" required></div>
-        <div class="field"><label>Exercise Induced Angina (0/1):</label><input name="exang" placeholder="0 or 1" required></div>
-        <div class="field"><label>ST Depression (oldpeak):</label><input name="oldpeak" placeholder="e.g. 1.5" required></div>
-        <div class="field"><label>Slope of ST Segment (0-2):</label><input name="slope" placeholder="0-2" required></div>
-        <div class="field"><label>Major Vessels (0-4):</label><input name="ca" placeholder="0-4" required></div>
-        <div class="field"><label>Thalassemia (1-3):</label><input name="thal" placeholder="1-3" required></div>
-        <br>
-        <button type="submit">Predict</button>
-    </form>
+    <div class="wrap">
+        <form method="POST">
+            <div class="card">
+                <h2>Demographics</h2>
+                <div class="row">
+                    <div class="field">
+                        <label>Age</label>
+                        <input type="number" name="age" placeholder="55" required>
+                    </div>
+                    <div class="field">
+                        <label>Sex</label>
+                        <select name="sex" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="0">Female</option>
+                            <option value="1">Male</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-    {% if result %}
-        <div class="result {{ 'disease' if result.prediction == 1 else 'healthy' }}">
-            {{ result.prediction_label }}
+            <div class="card">
+                <h2>Clinical Measurements</h2>
+                <div class="row">
+                    <div class="field">
+                        <label>Resting BP (mm Hg)</label>
+                        <input type="number" name="trestbps" placeholder="130" required>
+                    </div>
+                    <div class="field">
+                        <label>Cholesterol (mg/dl)</label>
+                        <input type="number" name="chol" placeholder="250" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label>Max Heart Rate</label>
+                        <input type="number" name="thalach" placeholder="150" required>
+                    </div>
+                    <div class="field">
+                        <label>ST Depression (Oldpeak)</label>
+                        <input type="number" step="0.1" name="oldpeak" placeholder="1.5" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label>Fasting Blood Sugar > 120</label>
+                        <select name="fbs" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Exercise Angina</label>
+                        <select name="exang" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Cardiac Tests</h2>
+                <div class="row">
+                    <div class="field">
+                        <label>Chest Pain Type</label>
+                        <select name="cp" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="1">Typical Angina</option>
+                            <option value="2">Atypical Angina</option>
+                            <option value="3">Non-anginal Pain</option>
+                            <option value="4">Asymptomatic</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Resting ECG</label>
+                        <select name="restecg" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="0">Normal</option>
+                            <option value="1">ST-T Abnormality</option>
+                            <option value="2">LV Hypertrophy</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label>Slope of ST Segment</label>
+                        <select name="slope" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="1">Upsloping</option>
+                            <option value="2">Flat</option>
+                            <option value="3">Downsloping</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Major Vessels (0-3)</label>
+                        <select name="ca" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label>Thalassemia</label>
+                        <select name="thal" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="3">Normal</option>
+                            <option value="6">Fixed Defect</option>
+                            <option value="7">Reversible Defect</option>
+                        </select>
+                    </div>
+                    <div class="field"></div>
+                </div>
+            </div>
+
+            <div class="btn-wrap">
+                <button type="submit" class="btn">Predict Risk</button>
+            </div>
+        </form>
+
+        {% if result %}
+        <div class="card">
+            <div class="result {{ 'result-disease' if result.prediction == 1 else 'result-healthy' }}">
+                <h3>{{ result.prediction_label }}</h3>
+                <p>Confidence: {{ "%.1f"|format(result.confidence * 100) }}% &bull; Risk Level: {{ result.risk_level }}</p>
+            </div>
         </div>
-        <div class="info">
-            Confidence: {{ "%.2f"|format(result.confidence * 100) }}% &nbsp;|&nbsp;
-            Risk Level: {{ result.risk_level }}
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
 </body>
 </html>
 """
