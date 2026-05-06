@@ -45,9 +45,12 @@ HTML = """
         header h1 { font-size: 19px; font-weight: 600; }
         header p { font-size: 12px; opacity: 0.8; margin-top: 3px; }
 
+        html { overflow: hidden; height: 100%; }
+        body { height: 100%; }
+
         .wrap {
             max-width: 720px;
-            margin: 20px auto;
+            margin: 14px auto;
             padding: 0 16px;
         }
 
@@ -55,23 +58,23 @@ HTML = """
             background: white;
             border-radius: 8px;
             box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-            padding: 16px 20px;
-            margin-bottom: 14px;
+            padding: 14px 20px;
+            margin-bottom: 10px;
         }
 
         .card h2 {
             font-size: 13px;
             font-weight: 600;
             color: #b71c1c;
-            margin-bottom: 12px;
-            padding-bottom: 6px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
             border-bottom: 2px solid #ffcdd2;
         }
 
         .row {
             display: flex;
             gap: 16px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .row .field { flex: 1; }
@@ -106,7 +109,7 @@ HTML = """
 
         .btn-wrap {
             text-align: center;
-            padding-top: 8px;
+            padding-top: 4px;
         }
 
         .btn {
@@ -123,7 +126,7 @@ HTML = """
         .btn:hover { background: #9a1515; }
 
         .result {
-            padding: 14px;
+            padding: 12px;
             border-radius: 6px;
             text-align: center;
         }
@@ -138,13 +141,14 @@ HTML = """
             border-left: 4px solid #43a047;
         }
 
-        .result h3 { font-size: 18px; margin-bottom: 6px; }
+        .result h3 { font-size: 16px; margin-bottom: 4px; }
         .result-disease h3 { color: #c62828; }
         .result-healthy h3 { color: #2e7d32; }
 
         .result p {
-            font-size: 13px;
+            font-size: 12px;
             color: #666;
+            margin: 0;
         }
     </style>
 </head>
@@ -280,11 +284,9 @@ HTML = """
         </form>
 
         {% if result %}
-        <div class="card">
-            <div class="result {{ 'result-disease' if result.prediction == 1 else 'result-healthy' }}">
-                <h3>{{ result.prediction_label }}</h3>
-                <p>Confidence: {{ "%.1f"|format(result.confidence * 100) }}% &bull; Risk Level: {{ result.risk_level }}</p>
-            </div>
+        <div class="result {{ 'result-disease' if result.prediction == 1 else 'result-healthy' }}" style="margin-top:10px;">
+            <h3>{{ result.prediction_label }}</h3>
+            <p>Confidence: {{ "%.1f"|format(result.confidence * 100) }}% &bull; Risk Level: {{ result.risk_level }}</p>
         </div>
         {% endif %}
     </div>
