@@ -9,6 +9,4 @@ api.log
 .pytest_cache/
 .ipynb_checkpoints/
 
-# Recording (large video files)
-recording/
 
